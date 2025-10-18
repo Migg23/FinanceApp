@@ -1,5 +1,5 @@
 import './LoginPageCSS.css';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 /**
  * Author: Eder Martinez
@@ -11,9 +11,46 @@ function LoginPage() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
 
-  const handleLogin = (e) => {
-    e.preventDefault();
-  };
+//   useEffect(() => {
+//     const FetchData = async () => {
+//       try{
+//         const response = await fetch('http://localhost:5000/login')
+//         const data = await response.json()
+
+//         setUsername(data.username)
+//         setPassword(data.password)
+//       }
+//       catch(ex) {
+//         alert("Does not work" + ex)
+//       }
+//   }
+//   FetchData()
+// }, []);
+
+const handleLogin = async (e) => {
+  e.preventDefault(); // stop page reload on submit
+
+  try {
+    const response = await fetch('http://localhost:5000/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ 
+        username: username, 
+        password: password, }),
+    });
+
+    const data = await response.json();
+    console.log("login response:", data)
+
+    if (response.ok) {
+      alert('Login successful!');
+    } else {
+      alert(data.message || 'Login failed');
+    }
+  } catch (error) {
+    alert('Error logging in: ' + error);
+  }
+};
 
   return (
     <div className="login-container">

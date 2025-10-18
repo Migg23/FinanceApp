@@ -27,25 +27,6 @@
     <title>React App</title>
   </head>
   <body>
-    <h3>Profile form</h3>
-      <form action="/" method="POST">
-         <label>First Name</label>
-         <input type="text" name= "name" placeholder="name...">
-         <label>Username</label>
-         <input type="text" name="username" placeholder="username..">
-         <label>Password</label>
-         <input type="text" name="password" placeholder="password..">
-         <label>Email</label>
-         <input type="text" name="email" placeholder="email@ksu.edu..">
-         <button type="submit">Add</button>
-      </form>
-    <h3>Users Info</h3>
-    <p>Total users: {{ profiles|length }}</p>
-      <ul>
-        {% for data in profiles %}
-          <li>{{ data.name }} ({{ data.username }})</li>
-        {% endfor %}
-      </ul>
     <noscript>You need to enable JavaScript to run this app.</noscript>
     <div id="root"></div>
     <!--
