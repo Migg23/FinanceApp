@@ -1,6 +1,6 @@
 import os
 import sys
-from flask import Flask, render_template, request, redirect, url_for, jsonify
+from flask import Flask, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))  # Adds FinanceApp/ to path
 from server.config import Config
@@ -36,12 +36,13 @@ class User(db.Model):
 #             return redirect(url_for('index'))
 #     users = User.query.all() #as of now allows all info to be pulled to index
 #     return render_template('index.html', profiles=users)
-@userdata.route('api/users', methods=['GET'])
+
+@userdata.route('/users', methods=['GET'])
 def get_user():
     users = User.query.all()
     return jsonify([{'id': user.id, 'username': user.username, 'email': user.email} for user in users])
 
-@userdata.route('/api/register', methods=['POST'])
+@userdata.route('/register', methods=['POST'])
 def add_user():
     data = request.get_json()
     new_user = User(username=data['username'], password=data['password'])
@@ -49,7 +50,7 @@ def add_user():
     db.session.commit()
     return jsonify({'message': 'User added successfully'}), 201
 
-@userdata.route('api/login', methods=['POST'])
+@userdata.route('/', methods=['GET','POST'])
 def login_user():
     data = request.get_json()
     username = data.get('username')

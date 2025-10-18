@@ -9,7 +9,7 @@ def create_app():
     app = Flask(__name__)
     app.config.from_object(Config)
 
-    CORS(app)
+    CORS(app, resource={r"/*": {"origins": {"http:localhost:5000", "http://localhost:3000"}}})
     db.init_app(app)
 
     from server.userdata.userdata import userdata_bp
