@@ -1,17 +1,15 @@
-/**
- * Author: Eder Martinez
- * This uses the index.css body h1 settings so if you wanna change
- * something go there
- * @returns 
- */
-function HomePage()
-{
-    return (
-        <div className="home">
-            <h1>Budget Boss</h1>
-            <p>A cool app for budgetting and stuff</p>
-        </div>
-    )
+import Navbar from './Navbar';
+
+function HomePage() {
+  return (
+    <>
+      <Navbar />  {/* Render the Navbar component here */}
+      <div className="home">
+        <h1>Budget Boss</h1>
+        <p>A cool app for budgeting and stuff</p>
+      </div>
+    </>
+  );
 }
 
 export default HomePage;
