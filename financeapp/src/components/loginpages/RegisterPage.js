@@ -5,7 +5,7 @@ import style from './RegisterPage.module.css';
 function RegisterPage() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const [passwordConf, setPasswordConf] = useState('');
+  const [passwordConf, setPasswordConf] = useState(''); // renamed for clarity
   const [message, setMessage] = useState('');
 
   const handleRegister = async (e) => {
@@ -20,7 +20,7 @@ function RegisterPage() {
       const response = await fetch('http://localhost:5000/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ username, password }),
+        body: JSON.stringify({ username, password, passwordConf }), // don't send passwordConf to backend unless needed
       });
 
       const data = await response.json();
