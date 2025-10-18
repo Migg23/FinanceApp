@@ -1,12 +1,12 @@
 import os
 import sys
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, request, redirect, url_for, jsonify
 from flask_sqlalchemy import SQLAlchemy
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))  # Adds FinanceApp/ to path
 from server.config import Config
 
 # Absolute path to the public folder where index.html lives
-template_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '../..', 'financeapp', 'public'))
+template_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '../..', 'financeapp', 'src'))
 
 userdata = Flask(__name__, template_folder=template_path)
 userdata.config.from_object(Config)
@@ -21,21 +21,42 @@ class User(db.Model):
     password = db.Column(db.String(50))
     email = db.Column(db.String(25))
 
-@userdata.route('/', methods=['GET', 'POST']) #/is just index
-def index():
-    if request.method == 'POST':
-        name = request.form['name']
-        username = request.form['username']
-        password = request.form['password']
-        email = request.form['email']
+# @userdata.route('/', methods=['GET', 'POST']) #/is just index
+# def index():
+#     if request.method == 'POST':
+#         name = request.form['name']
+#         username = request.form['username']
+#         password = request.form['password']
+#         email = request.form['email']
 
-        if name != '' and username != '' and password != '' and email != '':
-            new_user = User(name=name, username=username, password=password, email=email)
-            db.session.add(new_user)
-            db.session.commit()
-            return redirect(url_for('index'))
-    users = User.query.all() #as of now allows all info to be pulled to index
-    return render_template('index.html', profiles=users)
+#         if name != '' and username != '' and password != '' and email != '':
+#             new_user = User(name=name, username=username, password=password, email=email)
+#             db.session.add(new_user)
+#             db.session.commit()
+#             return redirect(url_for('index'))
+#     users = User.query.all() #as of now allows all info to be pulled to index
+#     return render_template('index.html', profiles=users)
+@userdata.route('api/users', methods=['GET'])
+def get_user():
+    users = User.query.all()
+    return jsonify([{'id': user.id, 'username': user.username, 'email': user.email} for user in users])
+
+@userdata.route('/api/register', methods=['POST'])
+def add_user():
+    data = request.get_json()
+    new_user = User(username=data['username'], password=data['password'])
+    db.session.add(new_user)
+    db.session.commit()
+    return jsonify({'message': 'User added successfully'}), 201
+
+@userdata.route('api/login', methods=['POST'])
+def login_user():
+    data = request.get_json()
+    username = data.get('username')
+    password = data.get('password')
+
+    user = User.query.filter_by(username=username, password=password).first()
+    return jsonify({'message' : 'User did something'})
 
 if __name__ == '__main__':
     userdata.run(debug=True)
