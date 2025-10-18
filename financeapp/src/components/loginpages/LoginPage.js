@@ -1,15 +1,18 @@
-import './LoginForm.css';
+import './LoginPageCSS.css';
 import { useState } from 'react';
 
+/**
+ * Author: Eder Martinez
+ * Holds constant for setUsername and password as empty strings
+ * 
+ * @returns death
+ */
 function LoginPage() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
 
   const handleLogin = (e) => {
     e.preventDefault();
-    // For now, just log the values
-    console.log('Username:', username);
-    console.log('Password:', password);
   };
 
   return (

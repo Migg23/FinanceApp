@@ -1,4 +1,4 @@
-
+import { Link } from 'react-router-dom';
 import './Navbar.css';
 /**
  * Author: Eder Martinez
@@ -7,15 +7,17 @@ import './Navbar.css';
  * @returns 
  */
 
-function HomePage() {
+
+
+function Navbar() {
   return (
   <header className="header">
       <div className="logo">Budget Boss</div>
       <nav className="nav">
-        <a href="#expenses" onClick={}>Sign In / Sign Up</a>
+        <Link to="/login">Login/Sign up</Link>
       </nav>
     </header>
   );
 }
 
-export default HomePage;
+export default Navbar;
