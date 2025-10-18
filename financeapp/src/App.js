@@ -2,8 +2,8 @@ import logo from './logo.svg';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import './App.css';
 
-import Navbar from './components/homepages/Navbar';
-import HomePage from './components/homepages/Homepage';
+import Navbar from './components/homepages/Navbar.js';
+import HomePage from './components/homepages/Homepage.js';
 import LoginPage from './components/loginpages/LoginPage.js';
 
 function App() {

@@ -50,13 +50,13 @@ def add_user():
     db.session.commit()
     return jsonify({'message': 'User added successfully'}), 201
 
-@userdata.route('/', methods=['GET','POST'])
+@userdata.route('/index', methods=['POST'])
 def login_user():
     data = request.get_json()
-    username = data.get('username')
-    password = data.get('password')
+    us = data.get('Username')
+    pw = data.get('Password')
 
-    user = User.query.filter_by(username=username, password=password).first()
+    user = User.query.filter_by(username=us, password=pw).first()
     return jsonify({'message' : 'User did something'})
 
 if __name__ == '__main__':
