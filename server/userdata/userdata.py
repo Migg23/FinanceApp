@@ -32,8 +32,8 @@ def add_user():
 @userdata.route('/login', methods=['POST'])
 def login_user():
     data = request.get_json()
-    username = data.get('username')
-    password = data.get('password')
+    us = data.get('Username')
+    pw = data.get('Password')
 
     user = User.query.filter_by(username=username, password=password).first()
     return jsonify({'message': f'Logged in as {username}'})
