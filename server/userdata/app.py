@@ -170,30 +170,33 @@ def calculate():
 @app.route("/user/recipes", methods=['POST'])
 def get_recipes():
     data = request.get_json()
-    query = data.get("query", "")      # e.g., "chicken pasta"
-    ingredients = data.get("ingredients", "")  # optional: "chicken, cheese"
+    ingredients = data.get("ingredients", "")
 
-    recipes = search_recipes(query=query, ingredients=ingredients)
+    recipes = search_recipes_by_ingredients(ingredients=ingredients)
     return jsonify(recipes)
 
-def search_recipes(query):
-    url = f'https://api.spoonacular.com/recipes/complexsearch'
+def search_recipes_by_ingredients(ingredients):
+    url = 'https://api.spoonacular.com/recipes/findByIngredients'
+    
+    # Ensure ingredients is a string, comma-separated
+    if isinstance(ingredients, list):
+        ingredients = ','.join(ingredients)
+
     params = {
         'apiKey': creds.api_key,
-        'query': query,
+        'ingredients': ingredients,
         'number': 10,
-        'instructionsRequred': True,
-        'addRecipeInformation': True,
-        'fillInIngredients': True
+        'ranking': 1,  # prioritize recipes that use more of the ingredients
+        'ignorePantry': True
     }
 
     response = requests.get(url, params=params)
 
     if response.status_code == 200:
-        return response.json().get('results', [])
+        return response.json()  # This endpoint returns a list, not a dict
     else:
         print(f"API error: {response.status_code}, {response.text}")
-        return []
+        return {'error': f"API error: {response.status_code}", 'details': response.text}
 
 
 if __name__ == "__main__":

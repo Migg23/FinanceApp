@@ -1,6 +1,7 @@
 import './Dashboardcss.css'
 import Chart from './Chart.js'
 import FInfo from './FinanceInformation.js'
+import RecipeSearch from './Recipes.js'
 
 function DashBoard(){
 
