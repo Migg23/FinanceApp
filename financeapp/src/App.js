@@ -35,6 +35,14 @@ function App() {
           }
         />
         <Route
+          path='/dash'
+          element={
+            <Suspense fallback={<div>Loading Register...</div>}>
+              <DashPage/>
+            </Suspense>
+          }
+        />
+        <Route
           path="/budget"
           element={
             <Suspense fallback={<div>Loading budget calculator...</div>}>
