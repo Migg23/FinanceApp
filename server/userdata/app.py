@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify, redirect, url_for
+from flask import Flask, request, jsonify, redirect, url_for, session
 from flask_cors import CORS
 import mysql.connector
 import requests
@@ -6,7 +6,8 @@ import creds
 
 
 app = Flask(__name__)
-CORS(app)
+app.secret_key = 'your_secret_key_here'
+CORS(app, origins=["http://localhost:3000"], supports_credentials=True)
 
 # --- MySQL connection setup ---
 db_config_user = {
@@ -43,6 +44,7 @@ def login():
 
         # plain-text password check for now
         if user["password"] == password:
+            session["username"] = username
             return jsonify({"status": "login successful", "user": {"username": username}}), 200
         else:
             return jsonify({"status": "invalid credentials"}), 401
@@ -76,7 +78,7 @@ def register():
             (username, password)
         )
         conn.commit()
-
+        session["username"] = username
         return jsonify({"status": "User registered successfully"}), 201
 
     except mysql.connector.Error as err:
@@ -89,14 +91,14 @@ def register():
 
 @app.route("/user/data", methods=['POST'])
 def get_user_info():
-    data = request.request_json()
+    data = request.get_json()
     username = data.get("username")
 
     try:
         conn = mysql.connector.connect(**db_config_info)
         cursor = conn.cursor(dictionary=True)
 
-        cursor.excute("SELECT FROM * user_information WHERE username = %s", username)
+        cursor.excute("SELECT * FROM user_information WHERE username = %s", username)
         user = cursor.fetchone()
 
         return jsonify(user), 200
@@ -105,36 +107,49 @@ def get_user_info():
         cursor.close()
         conn.close()
 
+def get_username():
+    return session.get("username")
+
 
 @app.route("/calculate", methods=['POST'])
 def calculate():
-    data = request.request_json()
-    username = data.get("username")
-    salary = float(data.get("salary"))
+    data = request.get_json()
+    username = get_username()
+    salary = float(data.get("yearlySalary"))
     rent = float(data.get("rent"))
-    monthlyPay = float(data.get("monthlyPay"))
+    monthlyExpenses = float(data.get("monthlyExpenses"))
 
-    monthlySalary = float(salary / 12)
-    savings = float(salary * .10)
-    food = float(salary * .12)
-    fun = float(salary * .05)
-    leftover = (monthlySalary - rent - monthlyPay - savings - food - fun)
+    monthlySalary = salary / 12
+    savings = salary * .10
+    food = salary * .12
+    fun = salary * .05
+    leftover = (monthlySalary - rent - monthlyExpenses - savings - food - fun)
 
     try:
         conn = mysql.connector.connect(**db_config_info)
         cursor = conn.cursor(dictionary=True)
 
-        cursor.execute("""
-            UPDATE user_data
-            SET monthlySalary = %s,
-                       rent = %s,
-                       monthlyPay = %s,
-                       savings = %s,
-                       food = %s,
-                       fun = %s,
-                       leftover = %s
-            WHERE username = %s
-        """, (salary, rent, monthlyPay, savings, food, fun, leftover, username))
+        cursor.execute("SELECT * FROM user_data WHERE username = %s", (username,))
+        existing = cursor.fetchone()
+
+        if existing:
+            cursor.execute("""
+                UPDATE user_data
+                SET monthlySalary = %s,
+                    rent = %s,
+                    monthlyPay = %s,
+                    savings = %s,
+                    food = %s,
+                    fun = %s,
+                    leftover = %s
+                WHERE username = %s
+            """, (monthlySalary, rent, monthlyExpenses, savings, food, fun, leftover, username))
+        else:
+            cursor.execute("""
+                INSERT INTO user_data (
+                    username, monthlySalary, rent, monthlyPay, savings, food, fun, leftover
+                ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
+            """, (username, monthlySalary, rent, monthlyExpenses, savings, food, fun, leftover))
         conn.commit()
 
     finally:
