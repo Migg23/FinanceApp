@@ -30,6 +30,7 @@ def login():
     username = data.get("username")
     password = data.get("password")
 
+
     try:
         conn = mysql.connector.connect(**db_config_user)
         cursor = conn.cursor(dictionary=True)
@@ -53,10 +54,10 @@ def login():
 
 @app.route("/register", methods=['POST'])
 def register():
-    data = request.request_json()
+    data = request.get_json()
     username = data.get("username")
     password = data.get("password")
-    confirmpassword = data.get("confirmpasswoord")
+    confirmpassword = data.get("passwordConf")
 
     if password != confirmpassword:
         return jsonify({"status": "Passwords do not match"})
@@ -65,11 +66,21 @@ def register():
         conn = mysql.connector.connect(**db_config_user)
         cursor = conn.cursor(dictionary=True)
 
-        cursor.execute("INSERT INTO user_information (username, password) VALUES (%s, %s)",
-                    (username, password))
-        mysql.connection.commit()
+        cursor.execute("SELECT * FROM user_information WHERE username=%s", (username,))
+        if cursor.fetchone():
+            return jsonify({"status": "Username already exists"}), 409
 
-        return redirect(url_for('login'))
+        # Insert new user
+        cursor.execute(
+            "INSERT INTO user_information (username, password) VALUES (%s, %s)",
+            (username, password)
+        )
+        conn.commit()
+
+        return jsonify({"status": "User registered successfully"}), 201
+
+    except mysql.connector.Error as err:
+        return jsonify({"status": "Database error", "error": str(err)}), 500
 
     finally:
             cursor.close()

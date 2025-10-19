@@ -1,4 +1,5 @@
-import './LoginPageCSS.css';
+import style from './LoginPage.module.css';
+import { Link } from 'react-router-dom';
 import { useState } from 'react';
 
 function LoginPage() {
@@ -25,11 +26,11 @@ function LoginPage() {
     } catch (error) {
       console.error("Error during login:", error);
     }
-  };  // <-- make sure this semicolon is here
+  };
 
   return (
-    <div className="login-container">
-      <form className="login-form" onSubmit={handleLogin}>
+    <div className={style['login-container']}>
+      <form className={style['login-form']} onSubmit={handleLogin}>
         <h2>Login</h2>
 
         <label htmlFor="username">Username</label>
@@ -40,6 +41,7 @@ function LoginPage() {
           value={username}
           onChange={(e) => setUsername(e.target.value)}
           required
+          className={style.input}
         />
 
         <label htmlFor="password">Password</label>
@@ -50,13 +52,13 @@ function LoginPage() {
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           required
+          className={style.input}
         />
 
-        <button type="submit">Login</button>
+        <button type="submit" className={style.button}>Login</button>
 
-        <div className="login-options">
-          <a href="#signup">Sign Up</a>
-          <a href="#forgot">Forgot Password?</a>
+        <div className={style['login-options']}>
+          <Link to="/register">Sign up</Link>
         </div>
       </form>
     </div>
