@@ -1,5 +1,6 @@
 import './Dashboardcss.css'
 import Chart from './Chart.js'
+import FInfo from './FinanceInformation.js'
 
 function DashBoard(){
 
@@ -13,8 +14,8 @@ function DashBoard(){
                 <Chart/>
             </div>
             
-            <div >
-
+            <div className='chart-container'>
+                <FInfo/>
             </div>
             
         </div>
