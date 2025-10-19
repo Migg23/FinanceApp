@@ -1,6 +1,7 @@
 import style from './LoginPage.module.css';
 import { Link } from 'react-router-dom';
 import { useState } from 'react';
+import Navbar from '../homepages/Navbar';
 
 function LoginPage() {
   const [username, setUsername] = useState('');
@@ -29,6 +30,9 @@ function LoginPage() {
   };
 
   return (
+
+    <>
+    <Navbar />
     <div className={style['login-container']}>
       <form className={style['login-form']} onSubmit={handleLogin}>
         <h2>Login</h2>
@@ -62,6 +66,7 @@ function LoginPage() {
         </div>
       </form>
     </div>
+  </>
   );
 }
 

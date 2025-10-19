@@ -12,7 +12,7 @@ import './Navbar.css';
 function Navbar() {
   return (
   <header className="header">
-      <div className="logo">Budget Boss</div>
+      <div className="logo">Budget Buddy</div>
       <nav className="nav">
         <Link to="/login">Login/Sign up</Link>
       </nav>
