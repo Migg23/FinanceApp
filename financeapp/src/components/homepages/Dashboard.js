@@ -14,7 +14,7 @@ function DashBoard(){
                 <Chart/>
             </div>
             
-            <div className='chart-container'>
+            <div className='finance-container'>
                 <FInfo/>
             </div>
             

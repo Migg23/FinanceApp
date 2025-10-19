@@ -32,6 +32,14 @@ function App() {
             </Suspense>
           }
         />
+        <Route
+          path='/dash'
+          element={
+            <Suspense fallback={<div>Loading Register...</div>}>
+              <DashPage/>
+            </Suspense>
+          }
+        />
       </Routes>
     </Router>
   );
