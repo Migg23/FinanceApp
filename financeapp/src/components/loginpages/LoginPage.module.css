@@ -30,16 +30,17 @@
 .button {
   width: 100%;
   padding: 0.5rem;
-  background-color: #4caf50;
+  background-color: #572c8f;
   color: white;
   border: none;
   border-radius: 6px;
   cursor: pointer;
   font-size: 1rem;
+  transition: background-color 0.8s ease;
 }
 
 .button:hover {
-  background-color: #45a049;
+  background-color: #8A66BF;
 }
 
 .login-options {
