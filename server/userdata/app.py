@@ -21,13 +21,6 @@ db_config_user = {
     "database": "finance_user"
 }
 
-db_config_info = {
-    "host": "localhost",
-    "user": "root",
-    "password": "",
-    "database": "finance_info"
-}
-
 #region user login/register
 @app.route("/login", methods=["POST"])
 def login():
@@ -92,19 +85,33 @@ def register():
             conn.close()
 #endregion
 
-@app.route("/user/data", methods=['POST'])
+@app.route("/user/data", methods=['GET','POST'])
 def get_user_info():
-    data = request.get_json()
-    username = data.get("username")
+    #data = request.get_json()
+    #username = data.get("username")
+    username = 'mwbradley'
 
     try:
-        conn = mysql.connector.connect(**db_config_info)
+        conn = mysql.connector.connect(**db_config_user)
         cursor = conn.cursor(dictionary=True)
 
-        cursor.excute("SELECT * FROM user_information WHERE username = %s", username)
-        user = cursor.fetchone()
+        # Fix: Correct table name and WHERE clause
+        query = """
+            SELECT DISTINCT 
+                monthly_salary,
+                rent,
+                monthly_expenses,
+                food,
+                fun,
+                savings,
+                leftover
+            FROM finance_info
+            WHERE username = %s
+        """
+        cursor.execute(query, (username,))
+        user_data = cursor.fetchone()
 
-        return jsonify(user), 200
+        return jsonify(user_data), 200
     
     finally:
         cursor.close()
@@ -114,7 +121,8 @@ def get_user_info():
 @app.route("/calculate", methods=['POST'])
 def calculate():
     data = request.get_json()
-    username = data.get("username")
+    # username = data.get("username")
+    username = 'mwbradley'
 
     if not username:
         return jsonify({"status": "error", "message": "User not logged in"}), 401

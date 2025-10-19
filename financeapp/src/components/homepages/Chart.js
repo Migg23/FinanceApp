@@ -1,3 +1,5 @@
+import { useState, useEffect } from "react";
+import { useSearchParams } from "react-router-dom";
 import {
   PieChart,
   Pie,
@@ -8,16 +10,44 @@ import {
 
 
 function Chart(){
+    const [rent, setRent] = useState(0);
+    const [monthly_expenses, setMonthlyExpenses] = useState(0);
+    const [food, setFood] = useState(0);
+    const [fun, setFun] = useState(0);
+    const [savings, setSavings] = useState(0);
+    const [leftovers, setLeftover] = useState(0);
 
+    useEffect(() => {
+        const handleInfo = async () => {
+            try {
+                const response = await fetch('http://localhost:5000/user/data');
+                const data = await response.json()
+
+                setRent(Number(data.rent));
+                setMonthlyExpenses(Number(data.monthly_expenses));
+                setFood(Number(data.food));
+                setFun(Number(data.fun));
+                setSavings(Number(data.savings));
+                setLeftover(Number(data.leftover));
+            }
+            catch(ex) {
+                alert("error:" + ex)
+            }
+
+        }
+        handleInfo();
+    },[])
 
     const data = [
-        { name: "Apples", value: 400 },
-        { name: "Bananas", value: 300 },
-        { name: "Cherries", value: 300 },
-        { name: "Grapes", value: 200 }
+        { name: "Rent", value: rent },
+        { name: "Monthly Expenses", value: monthly_expenses },
+        { name: "Food", value: food },
+        { name: "fun", value: fun },
+        { name: "Savings", value: savings },
+        { name: "Leftovers", value: leftovers }
     ];
 
-    const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042"];
+    const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042", "#ff284cff", "#68ff42ff"];
 
     return(
         <div style={{ width: "100%", height: 350 , marginTop: -20}}>

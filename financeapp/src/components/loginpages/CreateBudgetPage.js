@@ -11,7 +11,6 @@ function CreateBudgetPage() {
     e.preventDefault();
 
     const username = localStorage.getItem('username');
-
     
     if (!username) {
         alert('Please log in first');
