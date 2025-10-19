@@ -6,14 +6,17 @@ import './App.css';
 import HomePage from './components/homepages/Homepage';
 import { lazy, Suspense } from 'react';
 import RegisterPage from './components/loginpages/RegisterPage';
+import CreateBudgetPage from './components/loginpages/CreateBudgetP';
 
 import DashBoard from './components/homepages/Dashboard';
+import { UserProvider } from './components/loginpages/UserContext';
 
 const LoginPage = lazy(() => import('./components/loginpages/LoginPage'));
 const DashPage = lazy(() => import('./components/homepages/Dashboard'));
-
+ 
 function App() {
   return (
+    <UserProvider>
     <Router>
     
       <Routes>
@@ -44,9 +47,19 @@ function App() {
           }
         />
         
+         <Route
+          path="/cbp"
+          element={
+            <Suspense fallback={<div>Loading Dashboard...Wait</div>}>
+              <CreateBudgetPage />
+            </Suspense>
+          }
+        />
 
       </Routes>
     </Router>
+
+    </UserProvider>
   );
 }
 

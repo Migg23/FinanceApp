@@ -1,13 +1,23 @@
-import { useState } from 'react';
-import { Link } from 'react-router-dom';
+
+import { Link, useNavigate } from 'react-router-dom';
 import style from './RegisterPage.module.css';
 import Navbar from '../homepages/Navbar';
+import { useContext, useState } from 'react';
+import { UserContext } from './UserContext';
+
+
+
+
 
 function RegisterPage() {
+  // in comp
+  const { username: contextUsername, setUN } = useContext(UserContext); // <- top level
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [passwordConf, setPasswordConf] = useState(''); // renamed for clarity
   const [message, setMessage] = useState('');
+
+  const navigate = useNavigate(); //navigate
 
   const handleRegister = async (e) => {
     e.preventDefault();
@@ -28,6 +38,10 @@ function RegisterPage() {
 
       if (response.ok) {
         setMessage(`Success: ${data.status}`);
+        
+        setUN(username);
+        console.log("Context Username", username);
+        navigate('/cbp');
       } else {
         setMessage(`Error: ${data.status || "Registration failed"}`);
       }
