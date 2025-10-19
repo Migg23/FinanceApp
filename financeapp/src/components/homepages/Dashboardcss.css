@@ -9,8 +9,8 @@ html, body, #root {
     width: 100%; 
 
     display: flex;
-    flex-direction: column;
-    background-color: #df73ff ;
+   
+    background-color: #572c8f ;
 
 }
 
@@ -28,4 +28,63 @@ html, body, #root {
     padding: 5%;
     border-radius: 10%;
     
+}
+
+.finance-info-wrapper {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  position: relative;
+}
+
+
+.finance-info-title {
+  margin-top: 10px;
+  text-align: center;
+}
+
+
+.finance-info-content {
+  flex: 1;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+}
+
+
+.finance-info-text {
+  width: 60%;
+  text-align: center;
+  font-size: 1.2rem;
+  color: #222;
+}
+
+
+.finance-arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 2rem;
+  color: #333;
+  cursor: pointer;
+  user-select: none;
+  transition: transform 0.2s ease, color 0.2s ease;
+}
+
+.finance-arrow:hover {
+  transform: translateY(-50%) scale(1.2);
+  color: #df73ff;
+}
+
+.finance-arrow.left {
+  left: 20px;
+}
+
+.finance-arrow.right {
+  right: 20px;
 }
