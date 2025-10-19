@@ -3,7 +3,7 @@ import Navbar from './Navbar';
 function HomePage() {
   return (
     <>
-      <Navbar />  {/* Render the Navbar component here */}
+      <Navbar /> 
       <div className="home">
         <h1>Budget Boss</h1>
         <p>A cool app for budgeting and stuff</p>
