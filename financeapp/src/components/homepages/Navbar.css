@@ -2,7 +2,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background-color: #FF0000; /* red */
+  background-color: #572c8f;
   padding: 15px 30px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
@@ -14,7 +14,7 @@
 }
 
 .nav a {
-  color: #ffffff;
+  color: #00FFFF;
   text-decoration: none;
   margin-left: 25px;
   font-weight: 500;

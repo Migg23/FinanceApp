@@ -5,8 +5,8 @@ function HomePage() {
     <>
       <Navbar /> 
       <div className="home">
-        <h1>Budget Boss</h1>
-        <p>A cool app for budgeting and stuff</p>
+        <h1>Budget Buddy</h1>
+        <p>A cool website for budgeting and stuff</p>
       </div>
     </>
   );
