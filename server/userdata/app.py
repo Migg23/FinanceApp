@@ -1,7 +1,7 @@
 from flask import Flask, request, jsonify, redirect, url_for
 from flask_cors import CORS
 import mysql.connector
-import json
+import requests
 import creds
 
 
@@ -129,6 +129,34 @@ def calculate():
     finally:
         cursor.close()
         conn.close()
+
+@app.route("/user/recipes", methods=['POST'])
+def get_recipes():
+    data = request.get_json()
+    query = data.get("query", "")      # e.g., "chicken pasta"
+    ingredients = data.get("ingredients", "")  # optional: "chicken, cheese"
+
+    recipes = search_recipes(query=query, ingredients=ingredients)
+    return jsonify(recipes)
+
+def search_recipes(query):
+    url = f'https://api.spoonacular.com/recipes/complexsearch'
+    params = {
+        'apiKey': creds.api_key,
+        'query': query,
+        'number': 10,
+        'instructionsRequred': True,
+        'addRecipeInformation': True,
+        'fillInIngredients': True
+    }
+
+    response = requests.get(url, params=params)
+
+    if response.status_code == 200:
+        return response.json().get('results', [])
+    else:
+        print(f"API error: {response.status_code}, {response.text}")
+        return []
 
 
 if __name__ == "__main__":
