@@ -18,9 +18,17 @@ function Chart(){
     const [leftovers, setLeftover] = useState(0);
 
     useEffect(() => {
-        const handleInfo = async () => {
-            try {
-                const response = await fetch('http://localhost:5000/user/data');
+    const handleInfo = async () => {
+        try {
+            const username = localStorage.getItem("username"); // ✅ Get username from localStorage
+
+            const response = await fetch('http://localhost:5000/user/data', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ username }) // ✅ Send it in the request body
+            });
                 const data = await response.json()
 
                 setRent(Number(data.rent));

@@ -21,7 +21,8 @@ function LoginPage() {
 
       if (response.ok) {
         console.log("Login successful:", data);
-        navigate('/dashboard'); 
+        localStorage.setItem("username", data.user.username)
+        navigate('/dash'); 
       } else {
         console.error("Login failed:", data.status || response.status);
       }

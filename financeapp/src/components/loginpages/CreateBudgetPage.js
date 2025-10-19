@@ -1,11 +1,13 @@
 import style from './LoginPage.module.css';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useState } from 'react';
+import Navbar from '../homepages/Navbar';
 
 function CreateBudgetPage() {
   const [yearlySalary, setYearlySalary] = useState('');
   const [rent, setRent] = useState('');
   const [monthlyExpenses, setMonthlyExpenses] = useState('');
+  const navigate = useNavigate();
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -20,18 +22,21 @@ function CreateBudgetPage() {
     try {
       const response = await fetch('http://localhost:5000/calculate', {
         method: 'POST',
+        headers: { 'Content-Type': 'application/json'},
         credentials: 'include',
-        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-            yearlySalary: Number(yearlySalary),
-            rent: Number(rent),
-            monthlyExpenses: Number(monthlyExpenses),}),
+            yearlySalary: yearlySalary,
+            rent: rent,
+            monthlyExpenses: monthlyExpenses,
+            username: localStorage.getItem("username")}),
       });
 
       const data = await response.json();
 
       if (response.ok) {
         console.log("Added data:", data);
+        localStorage.setItem("username", username)
+        navigate('/dash')
       } else {
         console.error("Data failed:", data.status || response.status);
       }
@@ -41,6 +46,8 @@ function CreateBudgetPage() {
   };
 
   return (
+    <>
+    <Navbar />
     <div className={style['login-container']}>
       <form className={style['login-form']} onSubmit={handleLogin}>
         <h2>New Budget</h2>
@@ -81,6 +88,7 @@ function CreateBudgetPage() {
         <button type="submit" className={style.button}>Calculate</button>
       </form>
     </div>
+    </>
   );
 }
 

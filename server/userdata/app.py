@@ -7,7 +7,8 @@ import creds
 
 app = Flask(__name__)
 app.secret_key = 'your_secret_key_here'
-CORS(app, resources={r"/*": {"origins": "http://localhost:3000"}}, supports_credentials=True)
+CORS(app, resources={r"/*": {"origins": ["http://localhost:3000", "http://localhost:5000"]}}, methods=['GET','POST'] , supports_credentials=True, vary_header=False)
+
 app.config.update(
     SESSION_COOKIE_SAMESITE="Lax",
     SESSION_COOKIE_SECURE=False,
@@ -41,7 +42,6 @@ def login():
 
         # plain-text password check for now
         if user["password"] == password:
-            session["username"] = username
             return jsonify({"status": "login successful", "user": {"username": username}}), 200
         else:
             return jsonify({"status": "invalid credentials"}), 401
@@ -87,9 +87,8 @@ def register():
 
 @app.route("/user/data", methods=['GET','POST'])
 def get_user_info():
-    #data = request.get_json()
-    #username = data.get("username")
-    username = 'mwbradley'
+    data = request.get_json()
+    username = data.get("username")
 
     try:
         conn = mysql.connector.connect(**db_config_user)
@@ -121,35 +120,33 @@ def get_user_info():
 @app.route("/calculate", methods=['POST'])
 def calculate():
     data = request.get_json()
-    # username = data.get("username")
-    username = 'mwbradley'
+    username = data.get("username")
+    #username = 'mwbradley'
 
-    if not username:
-        return jsonify({"status": "error", "message": "User not logged in"}), 401
+    salary = float(data["yearlySalary"])
+    rent = float(data["rent"])
+    monthlyExpenses = float(data["monthlyExpenses"])
     
-    salary = float(data.get("yearlySalary"))
-    rent = float(data.get("rent"))
-    monthlyExpenses = float(data.get("monthlyExpenses"))
 
-    monthlySalary = salary / 12
-    savings = salary * .10
-    food = salary * .12
-    fun = salary * .05
+    monthlySalary = salary / 12.0
+    savings = monthlySalary * .10
+    food = monthlySalary * .12
+    fun = monthlySalary * .05
     leftover = (monthlySalary - rent - monthlyExpenses - savings - food - fun)
 
     try:
-        conn = mysql.connector.connect(**db_config_info)
+        conn = mysql.connector.connect(**db_config_user)
         cursor = conn.cursor(dictionary=True)
 
-        cursor.execute("SELECT * FROM user_data WHERE username = %s", (username,))
+        cursor.execute("SELECT * FROM finance_info WHERE username = %s", (username,))
         existing = cursor.fetchone()
 
         if existing:
             cursor.execute("""
-                UPDATE user_data
-                SET monthlySalary = %s,
+                UPDATE finance_info
+                SET monthly_salary = %s,
                     rent = %s,
-                    monthlyPay = %s,
+                    monthly_expenses = %s,
                     savings = %s,
                     food = %s,
                     fun = %s,
@@ -158,11 +155,13 @@ def calculate():
             """, (monthlySalary, rent, monthlyExpenses, savings, food, fun, leftover, username))
         else:
             cursor.execute("""
-                INSERT INTO user_data (
-                    username, monthlySalary, rent, monthlyPay, savings, food, fun, leftover
+                INSERT INTO finance_info (
+                    username, monthly_salary, rent, monthly_expenses, food, fun, savings, leftover
                 ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
-            """, (username, monthlySalary, rent, monthlyExpenses, savings, food, fun, leftover))
+            """, (username, monthlySalary, rent, monthlyExpenses, food, fun, savings, leftover))
         conn.commit()
+
+        return jsonify({"username": "table updated"})
 
     finally:
         cursor.close()

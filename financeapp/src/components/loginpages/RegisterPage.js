@@ -28,7 +28,8 @@ function RegisterPage() {
       const data = await response.json();
 
       if (response.ok) {
-        localStorage.setItem('username', username);
+        localStorage.setItem('username', data.user.username);
+        console.log(localStorage)
         setMessage(`Success: ${data.status}`);
         navigate('/budget')
       } else {
