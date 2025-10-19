@@ -2,7 +2,6 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import style from './RegisterPage.module.css';
 import Navbar from '../homepages/Navbar';
-import Navbar from '../homepages/Navbar';
 
 function RegisterPage() {
   const [username, setUsername] = useState('');
@@ -49,7 +48,6 @@ function RegisterPage() {
     <div className={style['register-container']}>
       <form className={style['register-form']} onSubmit={handleRegister}>
         <h2 className={style.title}>Register</h2>
-    <>
     <Navbar/>
       <div className={style['register-container']}>
         <form className={style['register-form']} onSubmit={handleRegister}>
