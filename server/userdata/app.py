@@ -7,7 +7,11 @@ import creds
 
 app = Flask(__name__)
 app.secret_key = 'your_secret_key_here'
-CORS(app, origins=["http://localhost:3000"], supports_credentials=True)
+CORS(app, resources={r"/*": {"origins": "http://localhost:3000"}}, supports_credentials=True)
+app.config.update(
+    SESSION_COOKIE_SAMESITE="Lax",
+    SESSION_COOKIE_SECURE=False,
+)
 
 # --- MySQL connection setup ---
 db_config_user = {
@@ -78,8 +82,7 @@ def register():
             (username, password)
         )
         conn.commit()
-        session["username"] = username
-        return jsonify({"status": "User registered successfully"}), 201
+        return jsonify({"status": "User registered successfully", "user": {"username": username}}), 201
 
     except mysql.connector.Error as err:
         return jsonify({"status": "Database error", "error": str(err)}), 500
@@ -107,14 +110,15 @@ def get_user_info():
         cursor.close()
         conn.close()
 
-def get_username():
-    return session.get("username")
-
 
 @app.route("/calculate", methods=['POST'])
 def calculate():
     data = request.get_json()
-    username = get_username()
+    username = data.get("username")
+
+    if not username:
+        return jsonify({"status": "error", "message": "User not logged in"}), 401
+    
     salary = float(data.get("yearlySalary"))
     rent = float(data.get("rent"))
     monthlyExpenses = float(data.get("monthlyExpenses"))

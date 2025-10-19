@@ -10,12 +10,23 @@ function CreateBudgetPage() {
   const handleLogin = async (e) => {
     e.preventDefault();
 
+    const username = localStorage.getItem('username');
+
+    
+    if (!username) {
+        alert('Please log in first');
+        return;
+    }
+
     try {
       const response = await fetch('http://localhost:5000/calculate', {
         method: 'POST',
         credentials: 'include',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({yearlySalary, rent, monthlyExpenses }),
+        body: JSON.stringify({
+            yearlySalary: Number(yearlySalary),
+            rent: Number(rent),
+            monthlyExpenses: Number(monthlyExpenses),}),
       });
 
       const data = await response.json();
