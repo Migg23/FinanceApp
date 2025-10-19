@@ -7,6 +7,8 @@ import HomePage from './components/homepages/Homepage';
 import { lazy, Suspense } from 'react';
 import RegisterPage from './components/loginpages/RegisterPage';
 
+import DashBoard from './components/homepages/Dashboard';
+
 const LoginPage = lazy(() => import('./components/loginpages/LoginPage'));
 const DashPage = lazy(() => import('./components/homepages/Dashboard'));
 
@@ -32,6 +34,17 @@ function App() {
             </Suspense>
           }
         />
+
+        <Route
+          path="/dashboard"
+          element={
+            <Suspense fallback={<div>Loading Dashboard...Wait</div>}>
+              <DashBoard />
+            </Suspense>
+          }
+        />
+        
+
       </Routes>
     </Router>
   );
