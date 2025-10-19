@@ -6,10 +6,11 @@ import './App.css';
 import HomePage from './components/homepages/Homepage';
 import { lazy, Suspense } from 'react';
 import RegisterPage from './components/loginpages/RegisterPage';
-import NewBudgetPage from './components/loginpages/NewBudgetPage';
+import CreateBudgetPage from './components/loginpages/CreateBudgetPage';
 
 const LoginPage = lazy(() => import('./components/loginpages/LoginPage'));
 const DashPage = lazy(() => import('./components/homepages/Dashboard'));
+const BudgetPage = lazy(() => import('./components/loginpages/CreateBudgetPage'));
 
 function App() {
   return (
@@ -34,10 +35,10 @@ function App() {
           }
         />
         <Route
-          path="/calculate"
+          path="/budget"
           element={
             <Suspense fallback={<div>Loading budget calculator...</div>}>
-              <NewBudgetPage />
+              <CreateBudgetPage />
             </Suspense>
           }
         />
