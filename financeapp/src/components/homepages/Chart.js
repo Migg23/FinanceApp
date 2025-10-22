@@ -20,7 +20,7 @@ function Chart(){
     useEffect(() => {
     const handleInfo = async () => {
         try {
-            const username = localStorage.getItem("username"); // ✅ Get username from localStorage
+            const username = localStorage.getItem("username");
 
             const response = await fetch('http://localhost:5000/user/data', {
                 method: 'POST',
