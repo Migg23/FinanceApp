@@ -29,7 +29,7 @@ function RegisterPage() {
 
       if (response.ok) {
         localStorage.setItem('username', data.user.username);
-        console.log(localStorage)
+        //console.log(localStorage)
         setMessage(`Success: ${data.status}`);
         navigate('/budget')
       } else {

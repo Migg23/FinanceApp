@@ -1,8 +1,9 @@
 from flask import Flask, request, jsonify, redirect, url_for, session
 from flask_cors import CORS
+from werkzeug.security import generate_password_hash, check_password_hash
 import mysql.connector
 import requests
-import creds
+import creds, taxes
 
 
 app = Flask(__name__)
@@ -31,7 +32,7 @@ def login():
 
 
     try:
-        conn = mysql.connector.connect(**db_config_user)
+        conn = mysql.connector.connect(**db_config_user) # connects to mysql, ran through XAMPP
         cursor = conn.cursor(dictionary=True)
 
         cursor.execute("SELECT username, password FROM user_information WHERE username = %s", (username,))
@@ -40,8 +41,10 @@ def login():
         if not user:
             return jsonify({"status": "user not found"}), 404
 
-        # plain-text password check for now
-        if user["password"] == password:
+
+        #if user["password"] == password:
+        if check_password_hash(user["password"], password):
+            session['username'] = username
             return jsonify({"status": "login successful", "user": {"username": username}}), 200
         else:
             return jsonify({"status": "invalid credentials"}), 401
@@ -61,11 +64,14 @@ def register():
     if password != confirmpassword:
         return jsonify({"status": "Passwords do not match"})
 
+    password = generate_password_hash(password)
+
     try:
         conn = mysql.connector.connect(**db_config_user)
         cursor = conn.cursor(dictionary=True)
 
         cursor.execute("SELECT * FROM user_information WHERE username=%s", (username,))
+        session['username'] = username
         if cursor.fetchone():
             return jsonify({"status": "Username already exists"}), 409
 
@@ -75,6 +81,7 @@ def register():
             (username, password)
         )
         conn.commit()
+        session['username'] = username
         return jsonify({"status": "User registered successfully", "user": {"username": username}}), 201
 
     except mysql.connector.Error as err:
@@ -85,6 +92,7 @@ def register():
             conn.close()
 #endregion
 
+#region Table info
 @app.route("/user/data", methods=['GET','POST'])
 def get_user_info():
     data = request.get_json()
@@ -116,7 +124,7 @@ def get_user_info():
         cursor.close()
         conn.close()
 
-
+#region calculations for graph
 @app.route("/calculate", methods=['POST'])
 def calculate():
     data = request.get_json()
@@ -124,6 +132,8 @@ def calculate():
     #username = 'mwbradley'
 
     salary = float(data["yearlySalary"])
+    #fedTaxes = float(taxes.CalculateFederalTaxes(salary)) # need to add federal taxes table 
+    #print(fedTaxes)
     rent = float(data["rent"])
     monthlyExpenses = float(data["monthlyExpenses"])
     
@@ -133,6 +143,8 @@ def calculate():
     food = monthlySalary * .12
     fun = monthlySalary * .05
     leftover = (monthlySalary - rent - monthlyExpenses - savings - food - fun)
+    if (leftover < 0): # otherwise it messes with the graph on frontend
+        leftover = 0.00
 
     try:
         conn = mysql.connector.connect(**db_config_user)
@@ -167,6 +179,7 @@ def calculate():
         cursor.close()
         conn.close()
 
+#region API spoonacular
 @app.route("/user/recipes", methods=['POST'])
 def get_recipes():
     data = request.get_json()
