@@ -132,16 +132,16 @@ def calculate():
     #username = 'mwbradley'
 
     salary = float(data["yearlySalary"])
-    #fedTaxes = float(taxes.CalculateFederalTaxes(salary)) # need to add federal taxes table 
-    #print(fedTaxes)
+    fedTaxes = float(taxes.calculate_federal_taxes(salary)) # need to add federal taxes table
     rent = float(data["rent"])
     monthlyExpenses = float(data["monthlyExpenses"])
     
 
-    monthlySalary = salary / 12.0
-    savings = monthlySalary * .10
-    food = monthlySalary * .12
-    fun = monthlySalary * .05
+    monthlySalary = (salary - fedTaxes) / 12.0
+    percentages = taxes.budget_percentages(monthlySalary)
+    savings = float(monthlySalary * percentages["savings"])
+    food = float(monthlySalary * percentages["food"])
+    fun = float(monthlySalary * percentages["fun"])
     leftover = (monthlySalary - rent - monthlyExpenses - savings - food - fun)
     if (leftover < 0): # otherwise it messes with the graph on frontend
         leftover = 0.00
